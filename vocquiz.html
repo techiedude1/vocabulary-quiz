@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>7th Grade Vocabulary Builder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Baloo+2:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f9ff; /* Light blue background */
+        }
+        .main-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .header-title {
+            font-family: 'Baloo 2', cursive;
+            color: #2563eb; /* Blue-600 */
+        }
+        .current-word-display {
+            font-family: 'Baloo 2', cursive;
+            font-size: 3.5rem;
+            color: #1e3a8a; /* Darker Blue-800 */
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background-color: #dbeafe; /* Blue-100 */
+            border-radius: 12px;
+            border: 2px solid #93c5fd; /* Blue-300 */
+        }
+        .sentence-option {
+            padding: 1rem;
+            border: 2px solid #d1d5db; /* Gray-300 */
+            border-radius: 10px;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            background-color: #f9fafb; /* Gray-50 */
+            line-height: 1.6;
+        }
+        .sentence-option:hover {
+            border-color: #60a5fa; /* Blue-400 */
+            background-color: #eff6ff; /* Blue-50 */
+        }
+        .sentence-option.selected {
+            border-color: #2563eb; /* Blue-600 */
+            background-color: #dbeafe; /* Blue-100 */
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+        .sentence-option.correct-placement .sentence-blank {
+            color: #15803d; /* Green-700 */
+            font-weight: bold;
+            border-bottom: 2px solid #15803d;
+        }
+        .sentence-option.incorrect-try {
+            border-color: #ef4444; /* Red-500 */
+            background-color: #fee2e2; /* Red-100 */
+        }
+        .sentence-blank {
+            font-weight: 700;
+            color: #dc2626; /* Red-600 */
+            border-bottom: 2px dashed #fbbf24; /* Amber-400 */
+            padding: 0 0.1rem;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: #2563eb; /* Blue-600 */
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #1d4ed8; /* Blue-700 */
+        }
+        .btn-secondary {
+            background-color: #fbbf24; /* Amber-400 */
+            color: #422006;
+        }
+        .btn-secondary:hover {
+            background-color: #f59e0b; /* Amber-500 */
+        }
+        .message-area {
+            min-height: 3rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-top: 1rem;
+            text-align: center;
+        }
+        .message-correct {
+            background-color: #d1fae5; /* Green-100 */
+            color: #065f46; /* Green-700 */
+            border: 1px solid #6ee7b7; /* Green-300 */
+        }
+        .message-incorrect {
+            background-color: #fee2e2; /* Red-100 */
+            color: #991b1b; /* Red-700 */
+            border: 1px solid #fca5a5; /* Red-300 */
+        }
+        .message-info {
+            background-color: #e0f2fe; /* Sky-100 */
+            color: #075985; /* Sky-700 */
+            border: 1px solid #7dd3fc; /* Sky-300 */
+        }
+        .explanation-box {
+            background-color: #fffbeb; /* Amber-50 */
+            border: 2px dashed #fcd34d; /* Amber-300 */
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 1.5rem;
+        }
+        .score-display {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.5rem;
+            color: #166534; /* Green-700 */
+            text-align: right;
+            margin-bottom: 1rem;
+        }
+        .modal {
+            display: none; position: fixed; z-index: 100;
+            left: 0; top: 0; width: 100%; height: 100%;
+            overflow: auto; background-color: rgba(0,0,0,0.5);
+            justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background-color: #ffffff; margin: auto; padding: 2rem;
+            border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            width: 90%; max-width: 500px; text-align: center;
+        }
+        .modal-title {
+            font-family: 'Baloo 2', cursive; font-size: 2rem;
+            color: #2563eb; margin-bottom: 1rem;
+        }
+        .modal-text {
+            font-size: 1.1rem; color: #374151; margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+    <div class="main-container">
+        <header class="text-center mb-6">
+            <h1 class="text-5xl header-title">Vocabulary Voyager</h1>
+            <p class="text-lg text-gray-600 mt-2">Which sentence correctly uses the word below?</p>
+        </header>
+
+        <div id="score-area" class="score-display">Score: 0</div>
+
+        <div id="current-word-area" class="current-word-display">
+            </div>
+
+        <div id="sentence-options-container" class="space-y-3 mb-6">
+            </div>
+
+        <button id="submit-selection" class="btn btn-primary w-full mb-4">Submit Selection</button>
+
+        <div id="message-area" class="message-area">
+            </div>
+
+        <div id="explanation-area" class="explanation-box" style="display: none;">
+            <h3 class="text-xl font-semibold text-amber-700 mb-2">Explanation:</h3>
+            <p id="explanation-text" class="text-gray-700"></p>
+        </div>
+
+        <button id="next-word" class="btn btn-secondary w-full mt-6" style="display: none;">Next Word</button>
+    </div>
+
+    <div id="completion-modal" class="modal">
+        <div class="modal-content">
+            <h2 class="modal-title">🎉 Congratulations! 🎉</h2>
+            <p class="modal-text" id="final-score-text">You've completed all the words!</p>
+            <p class="modal-text">Keep learning and exploring new words!</p>
+            <button id="restart-quiz" class="btn btn-primary">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        const wordsData = [
+            {
+                word: "Ambiguous",
+                sentenceFillers: [
+                    { start: "The clear instructions made the task ", end: ".", isCorrectUse: false },
+                    { start: "The politician's statement was ", end: ", leaving everyone unsure of his true stance.", isCorrectUse: true },
+                    { start: "He felt very ", end: " after winning the prize.", isCorrectUse: false }
+                ],
+                explanation: "Something that is ambiguous can be understood in more than one way or is unclear. Think of it like a foggy window – you can't see through it clearly."
+            },
+            {
+                word: "Diligent",
+                sentenceFillers: [
+                    { start: "The ", end: " student always completed her homework on time.", isCorrectUse: true },
+                    { start: "He was ", end: " about sleeping in late every day.", isCorrectUse: false },
+                    { start: "The car was ", end: " and shiny after the wash.", isCorrectUse: false }
+                ],
+                explanation: "To be diligent means to work carefully and with a lot of effort. Imagine a busy bee, always working hard – that's being diligent!"
+            },
+            {
+                word: "Empathy",
+                sentenceFillers: [
+                    { start: "She showed great ", end: " for the delicious cake.", isCorrectUse: false },
+                    { start: "Having ", end: " means trying to understand how someone else is feeling.", isCorrectUse: true },
+                    { start: "The scientist studied the ", end: " of the rocks.", isCorrectUse: false }
+                ],
+                explanation: "Empathy is the ability to understand and share the feelings of another person. It's like stepping into someone else's shoes to see how they feel."
+            },
+            {
+                word: "Resilient",
+                sentenceFillers: [
+                    { start: "The glass shattered because it was very ", end: ".", isCorrectUse: false },
+                    { start: "Despite many challenges, the community proved to be incredibly ", end: ".", isCorrectUse: true },
+                    { start: "He ate a ", end: " apple for lunch.", isCorrectUse: false }
+                ],
+                explanation: "Being resilient means you can recover quickly from difficult situations or setbacks. Think of a bouncy ball – it always bounces back up!"
+            },
+            {
+                word: "Elaborate", // As a verb: to give more detail. As an adjective: detailed.
+                sentenceFillers: [
+                     // This sentence uses "elaborate" as an adjective.
+                    { start: "She created an ", end: " costume for the party, with many intricate details.", isCorrectUse: true},
+                    { start: "The plan was too ", end: ", so it was very simple to follow.", isCorrectUse: false }, // Contradiction
+                    { start: "He asked her to ", end: " the door.", isCorrectUse: false } // Incorrect verb usage
+                ],
+                explanation: "Elaborate can mean something is very detailed and complicated (like a fancy costume), OR it can mean to explain something in more detail (like 'Please elaborate on your idea.')."
+            },
+            {
+                word: "Consequence",
+                sentenceFillers: [
+                    { start: "The natural ", end: " of not studying for the test was a poor grade.", isCorrectUse: true },
+                    { start: "He received a ", end: " for his good behavior.", isCorrectUse: false },
+                    { start: "The ", end: " of the story was very happy.", isCorrectUse: false }
+                ],
+                explanation: "A consequence is the result or effect of an action or condition. If you drop a glass, the consequence is that it might break."
+            },
+            {
+                word: "Persevere",
+                sentenceFillers: [
+                    { start: "When the task was easy, she decided to ", end: ".", isCorrectUse: false },
+                    { start: "Even when the task was difficult, she decided to ", end: " and not give up.", isCorrectUse: true },
+                    { start: "He will ", end: " his vacation next week.", isCorrectUse: false }
+                ],
+                explanation: "To persevere means to keep trying to do something even when it's hard or you face obstacles. It's like climbing a mountain – you keep going even when it's tough!"
+            },
+            {
+                word: "Vivid",
+                sentenceFillers: [
+                    { start: "The artist used ", end: ", dull colors in the painting.", isCorrectUse: false },
+                    { start: "She had a ", end: " dream that felt very real.", isCorrectUse: true },
+                    { start: "The soup had a very ", end: " taste of nothing.", isCorrectUse: false }
+                ],
+                explanation: "Vivid means something is very clear, bright, and produces strong images in your mind. Think of a super bright, colorful rainbow – that's vivid!"
+            },
+            {
+                word: "Inevitable",
+                sentenceFillers: [
+                    { start: "It was ", end: " that the sun might not rise tomorrow.", isCorrectUse: false },
+                    { start: "After the dark clouds gathered, rain seemed ", end: ".", isCorrectUse: true },
+                    { start: "Winning the lottery is an ", end: " event for most people.", isCorrectUse: false }
+                ],
+                explanation: "Inevitable means something is certain to happen and cannot be avoided. Like the sun rising every morning – it's inevitable!"
+            },
+            {
+                word: "Facilitate",
+                sentenceFillers: [
+                    { start: "The new software will ", end: " better communication.", isCorrectUse: true },
+                    { start: "The heavy storm will ", end: " our travel plans.", isCorrectUse: false },
+                    { start: "He tried to ", end: " the argument by shouting louder.", isCorrectUse: false }
+                ],
+                explanation: "To facilitate means to make an action or process easier. Think of a helper who makes a job simpler for everyone – they facilitate the work."
+            }
+        ];
+
+        let currentWordIndex = 0;
+        let chancesLeft = 2;
+        let score = 0;
+        let currentWordData = {};
+        let selectedSentenceOptionIndex = -1;
+        let answerRevealedThisTurn = false;
+
+        const currentWordArea = document.getElementById('current-word-area');
+        const sentenceOptionsContainer = document.getElementById('sentence-options-container');
+        const submitSelectionButton = document.getElementById('submit-selection');
+        const messageArea = document.getElementById('message-area');
+        const explanationArea = document.getElementById('explanation-area');
+        const explanationText = document.getElementById('explanation-text');
+        const nextWordButton = document.getElementById('next-word');
+        const scoreArea = document.getElementById('score-area');
+        const completionModal = document.getElementById('completion-modal');
+        const finalScoreText = document.getElementById('final-score-text');
+        const restartQuizButton = document.getElementById('restart-quiz');
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]]; // Shuffle main words array
+                if (array[i].sentenceFillers) { // Shuffle sentence fillers for each word
+                    for (let k = array[i].sentenceFillers.length - 1; k > 0; k--) {
+                        const l = Math.floor(Math.random() * (k + 1));
+                        [array[i].sentenceFillers[k], array[i].sentenceFillers[l]] = [array[i].sentenceFillers[l], array[i].sentenceFillers[k]];
+                    }
+                }
+            }
+        }
+
+        function loadWord() {
+            if (currentWordIndex >= wordsData.length) {
+                showCompletionModal();
+                return;
+            }
+
+            currentWordData = wordsData[currentWordIndex];
+            chancesLeft = 2;
+            selectedSentenceOptionIndex = -1;
+            answerRevealedThisTurn = false;
+
+            currentWordArea.textContent = currentWordData.word;
+
+            sentenceOptionsContainer.innerHTML = '';
+            currentWordData.sentenceFillers.forEach((filler, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.classList.add('sentence-option', 'text-lg', 'text-gray-800');
+                optionDiv.innerHTML = `${filler.start}<span class="sentence-blank">_______</span>${filler.end}`;
+                optionDiv.dataset.index = index;
+                optionDiv.addEventListener('click', () => selectSentenceOption(index, optionDiv));
+                sentenceOptionsContainer.appendChild(optionDiv);
+            });
+
+            submitSelectionButton.disabled = true;
+            submitSelectionButton.classList.add('opacity-50', 'cursor-not-allowed');
+            submitSelectionButton.style.display = 'block';
+
+            messageArea.textContent = `Select the sentence where "${currentWordData.word}" fits. You have ${chancesLeft} chances.`;
+            messageArea.className = 'message-area message-info';
+            explanationArea.style.display = 'none';
+            nextWordButton.style.display = 'none';
+        }
+
+        function selectSentenceOption(index, element) {
+            if (answerRevealedThisTurn) return;
+
+            selectedSentenceOptionIndex = index;
+            const allOptions = sentenceOptionsContainer.querySelectorAll('.sentence-option');
+            allOptions.forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+            submitSelectionButton.disabled = false;
+            submitSelectionButton.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        function checkSelection() {
+            if (selectedSentenceOptionIndex === -1) {
+                messageArea.textContent = 'Please select a sentence option first!';
+                messageArea.className = 'message-area message-incorrect';
+                return;
+            }
+
+            const chosenOption = currentWordData.sentenceFillers[selectedSentenceOptionIndex];
+            const selectedDiv = document.querySelector(`.sentence-option[data-index='${selectedSentenceOptionIndex}']`);
+
+            if (chosenOption.isCorrectUse) {
+                messageArea.textContent = 'Correct! 🎉 That\'s the right spot!';
+                messageArea.className = 'message-area message-correct';
+                score++;
+                updateScoreDisplay();
+                revealFinalAnswer(true);
+            } else {
+                chancesLeft--;
+                selectedDiv.classList.add('incorrect-try');
+                selectedDiv.style.pointerEvents = 'none'; // Disable clicking this wrong option again
+
+                if (chancesLeft > 0) {
+                    messageArea.textContent = `Not quite. "${currentWordData.word}" doesn't fit there. You have ${chancesLeft} chance left. Try another sentence!`;
+                    messageArea.className = 'message-area message-incorrect';
+                    selectedSentenceOptionIndex = -1; // Reset selection
+                    submitSelectionButton.disabled = true;
+                    submitSelectionButton.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    messageArea.textContent = `Sorry, that wasn't it. Let's see where "${currentWordData.word}" goes.`;
+                    messageArea.className = 'message-area message-incorrect';
+                    revealFinalAnswer(false);
+                }
+            }
+        }
+
+        function revealFinalAnswer(wasCorrectOnLastTry) {
+            answerRevealedThisTurn = true;
+            explanationText.textContent = currentWordData.explanation;
+            explanationArea.style.display = 'block';
+
+            const allOptions = sentenceOptionsContainer.querySelectorAll('.sentence-option');
+            allOptions.forEach((optionDiv, index) => {
+                optionDiv.style.pointerEvents = 'none';
+                optionDiv.classList.remove('selected');
+                const filler = currentWordData.sentenceFillers[index];
+                if (filler.isCorrectUse) {
+                    optionDiv.innerHTML = `${filler.start}<span class="sentence-blank">${currentWordData.word}</span>${filler.end}`;
+                    optionDiv.classList.add('correct-placement');
+                } else {
+                    // Optionally, you could grey out or further indicate incorrect options
+                     optionDiv.classList.add('opacity-60');
+                }
+            });
+
+            submitSelectionButton.style.display = 'none';
+            nextWordButton.style.display = 'block';
+            nextWordButton.focus();
+        }
+
+
+        function nextWordHandler() {
+            currentWordIndex++;
+            loadWord();
+        }
+
+        function updateScoreDisplay() {
+            scoreArea.textContent = `Score: ${score}`;
+        }
+
+        function showCompletionModal() {
+            finalScoreText.textContent = `You've completed all the words! Your final score is ${score} out of ${wordsData.length}.`;
+            completionModal.style.display = 'flex';
+        }
+
+        function restartQuizHandler() {
+            currentWordIndex = 0;
+            score = 0;
+            shuffleArray(wordsData);
+            updateScoreDisplay();
+            loadWord();
+            completionModal.style.display = 'none';
+        }
+
+        submitSelectionButton.addEventListener('click', checkSelection);
+        nextWordButton.addEventListener('click', nextWordHandler);
+        restartQuizButton.addEventListener('click', restartQuizHandler);
+
+        // Initial load
+        shuffleArray(wordsData);
+        loadWord();
+        updateScoreDisplay();
+    </script>
+</body>
+</html>
