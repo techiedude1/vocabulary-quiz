@@ -10,6 +10,7 @@
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f0f9ff; /* Light blue background */
+            padding-bottom: 4rem; /* Add padding to prevent content being hidden by the new button */
         }
         .main-container {
             max-width: 800px;
@@ -74,6 +75,8 @@
             font-weight: 600;
             transition: all 0.3s ease;
             cursor: pointer;
+            text-align: center; /* Ensure text is centered for anchor tags styled as buttons */
+            display: inline-block; /* For anchor tags to respect padding */
         }
         .btn-primary {
             background-color: #2563eb; /* Blue-600 */
@@ -144,6 +147,24 @@
         .modal-text {
             font-size: 1.1rem; color: #374151; margin-bottom: 1.5rem;
         }
+        .external-link-btn {
+            background-color: #1e40af; /* Darker blue for distinction */
+            color: white;
+            padding: 0.9rem 0;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem; /* Slightly smaller than title but prominent */
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: block; /* Make it a block to take full width */
+            width: 100%;
+            margin-top: 1.5rem; /* Space from the element above */
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+        }
+        .external-link-btn:hover {
+            background-color: #1c3682; /* Slightly darker on hover */
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen">
@@ -172,6 +193,11 @@
         </div>
 
         <button id="next-word" class="btn btn-secondary w-full mt-6" style="display: none;">Next Word</button>
+
+        <a href="https://techiedude1.github.io/Curious/"
+           class="external-link-btn"
+           target="_blank" rel="noopener noreferrer"> Back to My Curiosity Corner
+        </a>
     </div>
 
     <div id="completion-modal" class="modal">
@@ -297,11 +323,13 @@
         const finalScoreText = document.getElementById('final-score-text');
         const restartQuizButton = document.getElementById('restart-quiz');
 
+        // Function to shuffle an array (Fisher-Yates shuffle)
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [array[i], array[j]] = [array[j], array[i]]; // Shuffle main words array
-                if (array[i].sentenceFillers) { // Shuffle sentence fillers for each word
+                // If the items themselves have arrays that need shuffling (like sentenceFillers)
+                if (array[i].sentenceFillers && Array.isArray(array[i].sentenceFillers)) {
                     for (let k = array[i].sentenceFillers.length - 1; k > 0; k--) {
                         const l = Math.floor(Math.random() * (k + 1));
                         [array[i].sentenceFillers[k], array[i].sentenceFillers[l]] = [array[i].sentenceFillers[l], array[i].sentenceFillers[k]];
@@ -344,11 +372,13 @@
         }
 
         function selectSentenceOption(index, element) {
-            if (answerRevealedThisTurn) return;
+            if (answerRevealedThisTurn) return; // Don't allow selection after answer is revealed
 
             selectedSentenceOptionIndex = index;
+            // Remove 'selected' from previously selected, if any
             const allOptions = sentenceOptionsContainer.querySelectorAll('.sentence-option');
             allOptions.forEach(opt => opt.classList.remove('selected'));
+            // Add 'selected' to the current one
             element.classList.add('selected');
             submitSelectionButton.disabled = false;
             submitSelectionButton.classList.remove('opacity-50', 'cursor-not-allowed');
@@ -379,8 +409,9 @@
                     messageArea.textContent = `Not quite. "${currentWordData.word}" doesn't fit there. You have ${chancesLeft} chance left. Try another sentence!`;
                     messageArea.className = 'message-area message-incorrect';
                     selectedSentenceOptionIndex = -1; // Reset selection
-                    submitSelectionButton.disabled = true;
+                    submitSelectionButton.disabled = true; // Disable submit until new selection
                     submitSelectionButton.classList.add('opacity-50', 'cursor-not-allowed');
+
                 } else {
                     messageArea.textContent = `Sorry, that wasn't it. Let's see where "${currentWordData.word}" goes.`;
                     messageArea.className = 'message-area message-incorrect';
@@ -396,20 +427,21 @@
 
             const allOptions = sentenceOptionsContainer.querySelectorAll('.sentence-option');
             allOptions.forEach((optionDiv, index) => {
-                optionDiv.style.pointerEvents = 'none';
-                optionDiv.classList.remove('selected');
+                optionDiv.style.pointerEvents = 'none'; // Disable further clicks
+                optionDiv.classList.remove('selected'); // Clear selection visuals
                 const filler = currentWordData.sentenceFillers[index];
                 if (filler.isCorrectUse) {
+                    // Fill in the blank with the correct word
                     optionDiv.innerHTML = `${filler.start}<span class="sentence-blank">${currentWordData.word}</span>${filler.end}`;
-                    optionDiv.classList.add('correct-placement');
+                    optionDiv.classList.add('correct-placement'); // Style the correct sentence
                 } else {
                     // Optionally, you could grey out or further indicate incorrect options
                      optionDiv.classList.add('opacity-60');
                 }
             });
 
-            submitSelectionButton.style.display = 'none';
-            nextWordButton.style.display = 'block';
+            submitSelectionButton.style.display = 'none'; // Hide submit button
+            nextWordButton.style.display = 'block';     // Show next word button
             nextWordButton.focus();
         }
 
@@ -431,28 +463,21 @@
         function restartQuizHandler() {
             currentWordIndex = 0;
             score = 0;
-            shuffleArray(wordsData);
+            shuffleArray(wordsData); // Shuffle words for a new experience
             updateScoreDisplay();
             loadWord();
             completionModal.style.display = 'none';
         }
 
+        // Event Listeners
         submitSelectionButton.addEventListener('click', checkSelection);
         nextWordButton.addEventListener('click', nextWordHandler);
         restartQuizButton.addEventListener('click', restartQuizHandler);
 
         // Initial load
-        shuffleArray(wordsData);
+        shuffleArray(wordsData); // Shuffle words at the very start of the session
         loadWord();
         updateScoreDisplay();
     </script>
-
- <a href="https://techiedude1.github.io/Curious/" 
-   class="btn btn-primary w-full mt-8 text-center block"
-   style="background-color:#2563eb; color:white; padding:0.9rem 0; border-radius:8px; font-weight:600; font-size:1.15rem; text-decoration:none; transition:background 0.3s;">
-   Back to My Curiosity Corner
-</a>
-
-
 </body>
 </html>
