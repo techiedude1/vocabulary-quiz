@@ -34,6 +34,15 @@
             background-color: #dbeafe; /* Blue-100 */
             border-radius: 12px;
             border: 2px solid #93c5fd; /* Blue-300 */
+            line-height: 1.2; /* Adjust line height for word + definition */
+        }
+        .word-definition-display {
+            font-family: 'Inter', sans-serif; /* Revert to Inter for definition */
+            font-size: 1.1rem;
+            color: #0f766e; /* Teal-700 for contrast and readability */
+            font-weight: 500; /* Medium weight */
+            margin-top: 0.75rem; /* Space between word and definition */
+            line-height: 1.5;
         }
         .sentence-option {
             padding: 1rem;
@@ -148,22 +157,25 @@
             font-size: 1.1rem; color: #374151; margin-bottom: 1.5rem;
         }
         .external-link-btn {
-            background-color: #1e40af; /* Darker blue for distinction */
+            background: linear-gradient(45deg, #f87171, #fb923c); /* Vibrant gradient: Red-400 to Orange-400 */
             color: white;
             padding: 0.9rem 0;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 1.1rem; /* Slightly smaller than title but prominent */
+            border-radius: 10px; /* Slightly more rounded */
+            font-weight: 700; /* Bolder */
+            font-size: 1.15rem; /* A bit larger */
             text-decoration: none;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            display: block; /* Make it a block to take full width */
+            transition: all 0.35s ease; /* Smooth transition for all properties */
+            display: block;
             width: 100%;
-            margin-top: 1.5rem; /* Space from the element above */
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+            margin-top: 1.5rem;
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3); /* Softer shadow with a hint of color */
+            text-align: center; /* Ensures text is centered */
+            border: none; /* Remove default border if any from anchor tag */
         }
         .external-link-btn:hover {
-            background-color: #1c3682; /* Slightly darker on hover */
-            transform: translateY(-2px);
+            background: linear-gradient(45deg, #fb923c, #facc15); /* Shift gradient on hover: Orange-400 to Amber-400 */
+            box-shadow: 0 8px 20px rgba(251, 146, 60, 0.4); /* Enhanced shadow on hover */
+            transform: translateY(-3px) scale(1.02); /* Slightly lift and scale up */
         }
     </style>
 </head>
@@ -213,6 +225,7 @@
         const wordsData = [
             {
                 word: "Ambiguous",
+                definition: "Unclear or able to be understood in more than one way.",
                 sentenceFillers: [
                     { start: "The clear instructions made the task ", end: ".", isCorrectUse: false },
                     { start: "The politician's statement was ", end: ", leaving everyone unsure of his true stance.", isCorrectUse: true },
@@ -222,6 +235,7 @@
             },
             {
                 word: "Diligent",
+                definition: "Showing care and effort in your work or duties.",
                 sentenceFillers: [
                     { start: "The ", end: " student always completed her homework on time.", isCorrectUse: true },
                     { start: "He was ", end: " about sleeping in late every day.", isCorrectUse: false },
@@ -231,6 +245,7 @@
             },
             {
                 word: "Empathy",
+                definition: "The ability to understand and share someone else's feelings.",
                 sentenceFillers: [
                     { start: "She showed great ", end: " for the delicious cake.", isCorrectUse: false },
                     { start: "Having ", end: " means trying to understand how someone else is feeling.", isCorrectUse: true },
@@ -240,6 +255,7 @@
             },
             {
                 word: "Resilient",
+                definition: "Able to recover quickly from difficult conditions.",
                 sentenceFillers: [
                     { start: "The glass shattered because it was very ", end: ".", isCorrectUse: false },
                     { start: "Despite many challenges, the community proved to be incredibly ", end: ".", isCorrectUse: true },
@@ -248,17 +264,18 @@
                 explanation: "Being resilient means you can recover quickly from difficult situations or setbacks. Think of a bouncy ball – it always bounces back up!"
             },
             {
-                word: "Elaborate", // As a verb: to give more detail. As an adjective: detailed.
+                word: "Elaborate",
+                definition: "Detailed and complicated in design and planning, or to explain further.",
                 sentenceFillers: [
-                     // This sentence uses "elaborate" as an adjective.
                     { start: "She created an ", end: " costume for the party, with many intricate details.", isCorrectUse: true},
-                    { start: "The plan was too ", end: ", so it was very simple to follow.", isCorrectUse: false }, // Contradiction
-                    { start: "He asked her to ", end: " the door.", isCorrectUse: false } // Incorrect verb usage
+                    { start: "The plan was too ", end: ", so it was very simple to follow.", isCorrectUse: false },
+                    { start: "He asked her to ", end: " the door.", isCorrectUse: false }
                 ],
                 explanation: "Elaborate can mean something is very detailed and complicated (like a fancy costume), OR it can mean to explain something in more detail (like 'Please elaborate on your idea.')."
             },
             {
                 word: "Consequence",
+                definition: "A result or effect of an action or condition.",
                 sentenceFillers: [
                     { start: "The natural ", end: " of not studying for the test was a poor grade.", isCorrectUse: true },
                     { start: "He received a ", end: " for his good behavior.", isCorrectUse: false },
@@ -268,6 +285,7 @@
             },
             {
                 word: "Persevere",
+                definition: "To continue trying to do something despite difficulties.",
                 sentenceFillers: [
                     { start: "When the task was easy, she decided to ", end: ".", isCorrectUse: false },
                     { start: "Even when the task was difficult, she decided to ", end: " and not give up.", isCorrectUse: true },
@@ -277,6 +295,7 @@
             },
             {
                 word: "Vivid",
+                definition: "Producing powerful feelings or strong, clear images in the mind.",
                 sentenceFillers: [
                     { start: "The artist used ", end: ", dull colors in the painting.", isCorrectUse: false },
                     { start: "She had a ", end: " dream that felt very real.", isCorrectUse: true },
@@ -286,6 +305,7 @@
             },
             {
                 word: "Inevitable",
+                definition: "Certain to happen; unavoidable.",
                 sentenceFillers: [
                     { start: "It was ", end: " that the sun might not rise tomorrow.", isCorrectUse: false },
                     { start: "After the dark clouds gathered, rain seemed ", end: ".", isCorrectUse: true },
@@ -295,6 +315,7 @@
             },
             {
                 word: "Facilitate",
+                definition: "To make an action or process easy or easier.",
                 sentenceFillers: [
                     { start: "The new software will ", end: " better communication.", isCorrectUse: true },
                     { start: "The heavy storm will ", end: " our travel plans.", isCorrectUse: false },
@@ -323,12 +344,10 @@
         const finalScoreText = document.getElementById('final-score-text');
         const restartQuizButton = document.getElementById('restart-quiz');
 
-        // Function to shuffle an array (Fisher-Yates shuffle)
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]]; // Shuffle main words array
-                // If the items themselves have arrays that need shuffling (like sentenceFillers)
+                [array[i], array[j]] = [array[j], array[i]];
                 if (array[i].sentenceFillers && Array.isArray(array[i].sentenceFillers)) {
                     for (let k = array[i].sentenceFillers.length - 1; k > 0; k--) {
                         const l = Math.floor(Math.random() * (k + 1));
@@ -349,7 +368,19 @@
             selectedSentenceOptionIndex = -1;
             answerRevealedThisTurn = false;
 
-            currentWordArea.textContent = currentWordData.word;
+            currentWordArea.innerHTML = ''; 
+
+            const wordTextNode = document.createTextNode(currentWordData.word); 
+            currentWordArea.appendChild(wordTextNode);
+
+
+            if (currentWordData.definition) {
+                const definitionElement = document.createElement('p');
+                definitionElement.classList.add('word-definition-display');
+                definitionElement.textContent = currentWordData.definition;
+                currentWordArea.appendChild(definitionElement);
+            }
+
 
             sentenceOptionsContainer.innerHTML = '';
             currentWordData.sentenceFillers.forEach((filler, index) => {
@@ -372,13 +403,11 @@
         }
 
         function selectSentenceOption(index, element) {
-            if (answerRevealedThisTurn) return; // Don't allow selection after answer is revealed
+            if (answerRevealedThisTurn) return;
 
             selectedSentenceOptionIndex = index;
-            // Remove 'selected' from previously selected, if any
             const allOptions = sentenceOptionsContainer.querySelectorAll('.sentence-option');
             allOptions.forEach(opt => opt.classList.remove('selected'));
-            // Add 'selected' to the current one
             element.classList.add('selected');
             submitSelectionButton.disabled = false;
             submitSelectionButton.classList.remove('opacity-50', 'cursor-not-allowed');
@@ -403,13 +432,13 @@
             } else {
                 chancesLeft--;
                 selectedDiv.classList.add('incorrect-try');
-                selectedDiv.style.pointerEvents = 'none'; // Disable clicking this wrong option again
+                selectedDiv.style.pointerEvents = 'none';
 
                 if (chancesLeft > 0) {
                     messageArea.textContent = `Not quite. "${currentWordData.word}" doesn't fit there. You have ${chancesLeft} chance left. Try another sentence!`;
                     messageArea.className = 'message-area message-incorrect';
-                    selectedSentenceOptionIndex = -1; // Reset selection
-                    submitSelectionButton.disabled = true; // Disable submit until new selection
+                    selectedSentenceOptionIndex = -1;
+                    submitSelectionButton.disabled = true;
                     submitSelectionButton.classList.add('opacity-50', 'cursor-not-allowed');
 
                 } else {
@@ -427,21 +456,19 @@
 
             const allOptions = sentenceOptionsContainer.querySelectorAll('.sentence-option');
             allOptions.forEach((optionDiv, index) => {
-                optionDiv.style.pointerEvents = 'none'; // Disable further clicks
-                optionDiv.classList.remove('selected'); // Clear selection visuals
+                optionDiv.style.pointerEvents = 'none';
+                optionDiv.classList.remove('selected');
                 const filler = currentWordData.sentenceFillers[index];
                 if (filler.isCorrectUse) {
-                    // Fill in the blank with the correct word
                     optionDiv.innerHTML = `${filler.start}<span class="sentence-blank">${currentWordData.word}</span>${filler.end}`;
-                    optionDiv.classList.add('correct-placement'); // Style the correct sentence
+                    optionDiv.classList.add('correct-placement');
                 } else {
-                    // Optionally, you could grey out or further indicate incorrect options
                      optionDiv.classList.add('opacity-60');
                 }
             });
 
-            submitSelectionButton.style.display = 'none'; // Hide submit button
-            nextWordButton.style.display = 'block';     // Show next word button
+            submitSelectionButton.style.display = 'none';
+            nextWordButton.style.display = 'block';
             nextWordButton.focus();
         }
 
@@ -463,19 +490,17 @@
         function restartQuizHandler() {
             currentWordIndex = 0;
             score = 0;
-            shuffleArray(wordsData); // Shuffle words for a new experience
+            shuffleArray(wordsData);
             updateScoreDisplay();
             loadWord();
             completionModal.style.display = 'none';
         }
 
-        // Event Listeners
         submitSelectionButton.addEventListener('click', checkSelection);
         nextWordButton.addEventListener('click', nextWordHandler);
         restartQuizButton.addEventListener('click', restartQuizHandler);
 
-        // Initial load
-        shuffleArray(wordsData); // Shuffle words at the very start of the session
+        shuffleArray(wordsData);
         loadWord();
         updateScoreDisplay();
     </script>
